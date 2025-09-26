@@ -1,4 +1,4 @@
 subsystem,asset_id,asset_type,mnemonic,lower_critical,lower_caution,upper_caution,upper_critical,revision_notes
 Power,TM001,Electrical,PWR_BUS_VOLTAGE,22.5,24.0,30.0,32.0,Main bus voltage limits
 Power,TM003,Electrical,PWR_BATTERY_TEMP,-20,-10,45,55,Battery thermal limits
-Power,TM004,Electrical,PWR_SOLAR_CURRENT,0,2,25,30,Solar array current limits
+Power,ANY,Electrical,PWR_SOLAR_CURRENT,0,2,25,30,Solar array current limits
