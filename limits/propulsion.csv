@@ -1,4 +1,4 @@
 subsystem,asset_id,asset_type,mnemonic,lower_critical,lower_caution,upper_caution,upper_critical,revision_notes
 Propulsion,PR001,Mechanical,PROP_TANK_PRESS_1,-10,5,85,95,Initial baseline limits
 Propulsion,PR002,Mechanical,PROP_TEMP_MAIN,0,10,80,90,Updated thermal limits v1.2
-Kushal,PR003,Mechanical,PROP_FLOW_RATE,0.1,0.5,15.2,18.0,Flow rate operational limits
+TEST,PR003,Mechanical,PROP_FLOW_RATE,0.1,0.5,15.2,18.0,Flow rate operational limits
