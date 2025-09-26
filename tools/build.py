@@ -109,7 +109,7 @@ def lock_dist_files(dist_dir):
                 locked_files.append(file_path.name)
         
         if locked_files:
-            print(f"🔒 Locked {len(locked_files)} files as read-only:")
+            print(f"Locked {len(locked_files)} files as read-only:")
             for filename in locked_files:
                 print(f"     - {filename}")
             print("     Files cannot be manually edited (read-only protection)")

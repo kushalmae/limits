@@ -4,27 +4,27 @@
 # Automatically builds dist/ folder when limits/ folder changes are committed
 #
 
-echo "🚀 Spacecraft Limits Pre-commit Hook"
-echo "======================================"
+echo "Spacecraft Limits Pre-commit Hook"
+echo "=================================="
 
 # Check if any files in limits/ folder are being committed
 limits_changed=$(git diff --cached --name-only | grep "^limits/")
 
 if [ -n "$limits_changed" ]; then
-    echo "📁 Changes detected in limits/ folder:"
+    echo "Changes detected in limits/ folder:"
     echo "$limits_changed" | sed 's/^/   - /'
     echo ""
     
-    echo "🔧 Running build script to update dist/ folder..."
+    echo "Running build script to update dist/ folder..."
     
     # Run the build script
     if python tools/build.py; then
         echo ""
-        echo "✅ Build completed successfully!"
+        echo "Build completed successfully!"
         
         # Check if dist files were generated/updated
         if [ -f "dist/master.csv" ] && [ -f "dist/latest.json" ] && [ -f "dist/manifest.json" ]; then
-            echo "📦 Adding updated dist files to commit..."
+            echo "Adding updated dist files to commit..."
             
             # Temporarily unlock the files so git can read them
             chmod +w dist/master.csv dist/latest.json dist/manifest.json 2>/dev/null || true
@@ -36,20 +36,20 @@ if [ -n "$limits_changed" ]; then
             echo "   - dist/latest.json" 
             echo "   - dist/manifest.json"
             echo ""
-            echo "🔒 Dist files will be locked after commit completes"
+            echo "Dist files will be locked after commit completes"
         else
-            echo "❌ ERROR: Expected dist files were not generated"
+            echo "ERROR: Expected dist files were not generated"
             exit 1
         fi
     else
         echo ""
-        echo "❌ ERROR: Build script failed!"
+        echo "ERROR: Build script failed!"
         echo "Commit aborted. Please fix the issues and try again."
         exit 1
     fi
 else
-    echo "ℹ️  No changes in limits/ folder - skipping build"
+    echo "No changes in limits/ folder - skipping build"
 fi
 
-echo "======================================"
-echo "✅ Pre-commit hook completed successfully"
+echo "=================================="
+echo "Pre-commit hook completed successfully"
