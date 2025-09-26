@@ -1,0 +1,3 @@
+subsystem,asset_id,asset_type,mnemonic,lower_critical,lower_caution,upper_caution,upper_critical,revision_notes
+Thermal,TM005,Environmental,THERM_CPU_TEMP,-40,-30,70,85,CPU temperature operational range
+Thermal,TM002,Environmental,THERM_RADIATOR_TEMP,-50,-40,40,60,Radiator temperature limits

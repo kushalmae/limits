@@ -1,0 +1,96 @@
+{
+  "metadata": {
+    "generated_at": "2025-09-26T16:32:16.910607+00:00",
+    "count": 8
+  },
+  "limits": [
+    {
+      "mnemonic": "PWR_BUS_VOLTAGE",
+      "asset_id": "TM001",
+      "subsytem": "Power",
+      "asset_type": "THUNDER",
+      "lower_critical": 22.0,
+      "lower_caution": 24.0,
+      "upper_caution": 30.0,
+      "upper_critical": 32.0,
+      "revision_notes": "Main bus voltage limits"
+    },
+    {
+      "mnemonic": "PWR_BATTERY_TEMP",
+      "asset_id": "TM003",
+      "subsytem": "Power",
+      "asset_type": "THUNDER",
+      "lower_critical": -20.0,
+      "lower_caution": -10.0,
+      "upper_caution": 45.0,
+      "upper_critical": 55.0,
+      "revision_notes": "Battery thermal limits"
+    },
+    {
+      "mnemonic": "PWR_SOLAR_CURRENT",
+      "asset_id": "TM004",
+      "subsytem": "Power",
+      "asset_type": "THUNDER",
+      "lower_critical": 0.0,
+      "lower_caution": 2.0,
+      "upper_caution": 25.0,
+      "upper_critical": 30.0,
+      "revision_notes": "Solar array current limits"
+    },
+    {
+      "mnemonic": "PROP_TANK_PRESS_1",
+      "asset_id": "PR001",
+      "subsytem": "Propulsion",
+      "asset_type": "THUNDER",
+      "lower_critical": -10.0,
+      "lower_caution": 5.0,
+      "upper_caution": 85.0,
+      "upper_critical": 95.0,
+      "revision_notes": "Initial baseline limits"
+    },
+    {
+      "mnemonic": "PROP_TEMP_MAIN",
+      "asset_id": "PR002",
+      "subsytem": "Propulsion",
+      "asset_type": "THUNDER",
+      "lower_critical": 0.0,
+      "lower_caution": 10.0,
+      "upper_caution": 80.0,
+      "upper_critical": 90.0,
+      "revision_notes": "Updated thermal limits v1.2"
+    },
+    {
+      "mnemonic": "PROP_FLOW_RATE",
+      "asset_id": "PR003",
+      "subsytem": "Propulsion",
+      "asset_type": "THUNDER",
+      "lower_critical": 0.1,
+      "lower_caution": 0.5,
+      "upper_caution": 15.2,
+      "upper_critical": 18.0,
+      "revision_notes": "Flow rate operational limits"
+    },
+    {
+      "mnemonic": "THERM_CPU_TEMP",
+      "asset_id": "TM005",
+      "subsytem": "Thermal",
+      "asset_type": "THUNDER",
+      "lower_critical": -40.0,
+      "lower_caution": -30.0,
+      "upper_caution": 70.0,
+      "upper_critical": 85.0,
+      "revision_notes": "CPU temperature operational range"
+    },
+    {
+      "mnemonic": "THERM_RADIATOR_TEMP",
+      "asset_id": "TM002",
+      "subsytem": "Thermal",
+      "asset_type": "THUNDER",
+      "lower_critical": -50.0,
+      "lower_caution": -40.0,
+      "upper_caution": 40.0,
+      "upper_critical": 60.0,
+      "revision_notes": "Radiator temperature limits"
+    }
+  ]
+}
