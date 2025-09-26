@@ -10,6 +10,7 @@ import csv
 import json
 import os
 import glob
+import stat
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -63,6 +64,57 @@ def validate_asset_id(row, csv_file, row_number):
         print(f"ERROR: Empty asset_id in {csv_file} at row {row_number}")
         return False
     return True
+
+
+def unlock_dist_files(dist_dir):
+    """
+    Unlock (make writable) all files in the dist directory so they can be regenerated.
+    
+    Args:
+        dist_dir (Path): Path to the dist directory
+    """
+    if not dist_dir.exists():
+        return
+    
+    try:
+        for file_path in dist_dir.glob("*"):
+            if file_path.is_file():
+                # Make file writable (remove read-only flag)
+                current_mode = file_path.stat().st_mode
+                writable_mode = current_mode | stat.S_IWUSR | stat.S_IWGRP
+                file_path.chmod(writable_mode)
+        print("  -> Unlocked existing dist files for regeneration")
+    except Exception as e:
+        print(f"WARNING: Could not unlock some dist files: {e}")
+
+
+def lock_dist_files(dist_dir):
+    """
+    Lock (make read-only) all files in the dist directory to prevent manual editing.
+    
+    Args:
+        dist_dir (Path): Path to the dist directory
+    """
+    if not dist_dir.exists():
+        return
+    
+    locked_files = []
+    try:
+        for file_path in dist_dir.glob("*"):
+            if file_path.is_file() and not file_path.name.startswith('.'):
+                # Make file read-only (remove write permissions)
+                current_mode = file_path.stat().st_mode
+                readonly_mode = current_mode & ~(stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH)
+                file_path.chmod(readonly_mode)
+                locked_files.append(file_path.name)
+        
+        if locked_files:
+            print(f"🔒 Locked {len(locked_files)} files as read-only:")
+            for filename in locked_files:
+                print(f"     - {filename}")
+            print("     Files cannot be manually edited (read-only protection)")
+    except Exception as e:
+        print(f"WARNING: Could not lock some dist files: {e}")
 
 
 def read_csv_files(limits_dir):
@@ -219,6 +271,9 @@ def main():
     dist_dir.mkdir(exist_ok=True)
     print(f"Output directory: {dist_dir}")
     
+    # Unlock existing dist files so they can be overwritten
+    unlock_dist_files(dist_dir)
+    
     # Check if limits directory exists
     if not limits_dir.exists():
         print(f"ERROR: Limits directory not found: {limits_dir}")
@@ -239,6 +294,9 @@ def main():
     
     write_master_csv(str(master_csv_path), all_rows)
     write_json_output(str(json_output_path), all_rows)
+    
+    # Lock all generated files to prevent manual editing
+    lock_dist_files(dist_dir)
     
     print("=" * 40)
     print(f"Build completed successfully!")

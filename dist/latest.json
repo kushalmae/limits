@@ -52,7 +52,7 @@
   {
     "mnemonic": "PROP_FLOW_RATE",
     "asset_id": "PR003",
-    "subsytem": "Propulsion",
+    "subsytem": "TEST",
     "asset_type": "Mechanical",
     "lower_critical": 0.1,
     "lower_caution": 0.5,
