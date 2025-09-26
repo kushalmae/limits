@@ -26,11 +26,16 @@ if [ -n "$limits_changed" ]; then
         if [ -f "dist/master.csv" ] && [ -f "dist/latest.json" ] && [ -f "dist/manifest.json" ]; then
             echo "Adding updated dist files to commit..."
             
-            # Temporarily unlock the files so git can read them
+            # Temporarily unlock the files so git can stage them
             chmod +w dist/master.csv dist/latest.json dist/manifest.json 2>/dev/null || true
             
             # Add the updated dist files to the commit
             git add dist/master.csv dist/latest.json dist/manifest.json
+            
+            # Verify files were staged
+            git diff --cached --name-only | grep -E "dist/(master\.csv|latest\.json|manifest\.json)" || {
+                echo "WARNING: Some dist files may not have been staged properly"
+            }
             
             echo "   - dist/master.csv"
             echo "   - dist/latest.json" 
