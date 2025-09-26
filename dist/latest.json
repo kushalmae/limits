@@ -4,7 +4,7 @@
     "asset_id": "TM001",
     "subsytem": "Power",
     "asset_type": "Electrical",
-    "lower_critical": 22.0,
+    "lower_critical": 22.5,
     "lower_caution": 24.0,
     "upper_caution": 30.0,
     "upper_critical": 32.0
