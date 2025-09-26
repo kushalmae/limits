@@ -162,7 +162,7 @@ def write_master_csv(output_path, rows):
 
 def write_json_output(output_path, rows):
     """
-    Write rows to a JSON file with metadata.
+    Write rows to a JSON file and create a separate manifest file.
     
     Args:
         output_path (str): Path to the output JSON file
@@ -177,28 +177,31 @@ def write_json_output(output_path, rows):
             "mnemonic": row["mnemonic"] if row["mnemonic"].strip() else None,
             "asset_id": row["asset_id"] if row["asset_id"].strip() else None,
             "subsytem": row["subsystem"] if row["subsystem"].strip() else None,  # Note: typo is intentional per schema
-            "asset_type": "THUNDER",  # Always set to THUNDER
+            "asset_type": row["asset_type"] if row["asset_type"].strip() else None,  # Use asset_type from CSV
             "lower_critical": float(row["lower_critical"]) if row["lower_critical"].strip() else None,
             "lower_caution": float(row["lower_caution"]) if row["lower_caution"].strip() else None,
             "upper_caution": float(row["upper_caution"]) if row["upper_caution"].strip() else None,
-            "upper_critical": float(row["upper_critical"]) if row["upper_critical"].strip() else None,
-            "revision_notes": row["revision_notes"] if row["revision_notes"].strip() else None
+            "upper_critical": float(row["upper_critical"]) if row["upper_critical"].strip() else None
+            # revision_notes removed from JSON output
         }
         json_rows.append(json_row)
     
-    # Create output structure
-    output_data = {
-        "metadata": {
-            "generated_at": datetime.now(timezone.utc).isoformat(),
-            "count": len(json_rows)
-        },
-        "limits": json_rows
+    # Write latest.json with just the limits array
+    with open(output_path, 'w', encoding='utf-8') as f:
+        json.dump(json_rows, f, indent=2, ensure_ascii=False)
+    
+    # Write manifest.json with metadata
+    manifest_path = output_path.replace('latest.json', 'manifest.json')
+    manifest_data = {
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "count": len(json_rows)
     }
     
-    with open(output_path, 'w', encoding='utf-8') as f:
-        json.dump(output_data, f, indent=2, ensure_ascii=False)
+    with open(manifest_path, 'w', encoding='utf-8') as f:
+        json.dump(manifest_data, f, indent=2, ensure_ascii=False)
     
-    print(f"  -> Wrote {len(json_rows)} rows with metadata")
+    print(f"  -> Wrote {len(json_rows)} rows to latest.json")
+    print(f"  -> Wrote metadata to manifest.json")
 
 
 def main():
@@ -232,6 +235,7 @@ def main():
     # Write outputs
     master_csv_path = dist_dir / "master.csv"
     json_output_path = dist_dir / "latest.json"
+    manifest_path = dist_dir / "manifest.json"
     
     write_master_csv(str(master_csv_path), all_rows)
     write_json_output(str(json_output_path), all_rows)
@@ -241,6 +245,7 @@ def main():
     print(f"Total rows processed: {len(all_rows)}")
     print(f"Master CSV: {master_csv_path}")
     print(f"JSON output: {json_output_path}")
+    print(f"Manifest: {manifest_path}")
     
     return 0
 
