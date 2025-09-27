@@ -15,7 +15,7 @@ limits/           # Individual subsystem CSV files
 └── propulsion.csv
 
 tools/            # Build and setup scripts
-├── build.py      # Main build script
+├── build_master_limit_files_from_csvs.py      # Main build script
 └── install-hooks.py  # Git hooks installer
 
 dist/             # Generated files (read-only)
@@ -56,7 +56,7 @@ git push
 
 **Step 2:** Run build
 ```bash
-python tools/build.py
+python tools/build_master_limit_files_from_csvs.py
 ```
 
 **Step 3:** Commit & push (with generated files)

@@ -15,7 +15,7 @@ if ($limitsChanged) {
     Write-Host "Running build script to update dist/ folder..." -ForegroundColor Blue
     
     # Run the build script
-    $buildResult = python tools/build.py
+    $buildResult = python tools/build_master_limit_files_from_csvs.py
     $buildExitCode = $LASTEXITCODE
     
     if ($buildExitCode -eq 0) {

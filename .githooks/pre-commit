@@ -18,7 +18,7 @@ if [ -n "$limits_changed" ]; then
     echo "Running build script to update dist/ folder..."
     
     # Run the build script
-    if python tools/build.py; then
+    if python tools/build_master_limit_files_from_csvs.py; then
         echo ""
         echo "Build completed successfully!"
         

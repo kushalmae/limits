@@ -72,7 +72,7 @@ def install_git_hooks():
 
 if [ -f "dist/master.csv" ] || [ -f "dist/latest.json" ] || [ -f "dist/manifest.json" ]; then
     echo "Re-locking dist files..."
-    python tools/build.py > /dev/null 2>&1 || true
+    python tools/build_master_limit_files_from_csvs.py > /dev/null 2>&1 || true
 fi
 '''
     
@@ -91,7 +91,7 @@ fi
     print()
     print("What happens now:")
     print("   - When you commit changes to limits/ folder:")
-    print("     1. Pre-commit hook runs build.py automatically")
+    print("     1. Pre-commit hook runs build_master_limit_files_from_csvs.py automatically")
     print("     2. Updated dist/ files are added to the commit")
     print("     3. Post-commit hook re-locks the dist/ files")
     print()
