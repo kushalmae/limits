@@ -40,9 +40,9 @@ subsystem,asset_id,asset_type,mnemonic,lower_critical,lower_caution,upper_cautio
 python tools/install-hooks.py
 ```
 
-**Step 2:** Update limits
+**Step 2:** Update & commit
 - Edit your CSV file in `limits/`
-- Commit changes → builds automatically
+- `git add .` and `git commit` → builds automatically
 
 **Step 3:** Share (files auto-generated)
 ```bash
