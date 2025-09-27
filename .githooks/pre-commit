@@ -21,6 +21,7 @@ if [ -n "$limits_changed" ]; then
     if python tools/build_master_limit_files_from_csvs.py; then
         echo ""
         echo "Build completed successfully!"
+        wait 2
         
         # Check if dist files were generated/updated
         if [ -f "dist/master.csv" ] && [ -f "dist/latest.json" ] && [ -f "dist/manifest.json" ]; then

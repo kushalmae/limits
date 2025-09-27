@@ -4,6 +4,6 @@ Power,TM003,Electrical,PWR_BATTERY_TEMP,-20,-10,45,55,Battery thermal limits
 Power,ANY,Electrical,PWR_SOLAR_CURRENT,0,2,25,30,Solar array current limits
 Propulsion,PR001,Mechanical,PROP_TANK_PRESS_1,-10,5,85,95,Initial baseline limits
 Propulsion,PR002,Mechanical,PROP_TEMP_MAIN,0,10,80,90,Updated thermal limits v1.2
-TEST5,PR003,Mechanical,PROP_FLOW_RATE,0.1,0.5,15.2,18.0,Flow rate operational limits
+TEST6,PR003,Mechanical,PROP_FLOW_RATE,0.1,0.5,15.2,18.0,Flow rate operational limits
 Thermal,ANY,Environmental,THERM_CPU_TEMP,-45,-30,,85,CPU temperature operational range
 Thermal,TM002,Environmental,THERM_RADIATOR_TEMP,-50,,40,60,Radiator temperature limits
