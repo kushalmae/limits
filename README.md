@@ -34,34 +34,64 @@ subsystem,asset_id,asset_type,mnemonic,lower_critical,lower_caution,upper_cautio
 
 ## Usage
 
-### Manual Build
-```bash
-python tools/build.py
-```
-
-### Automatic Build Setup (One-time)
+### Automatic Method (Recommended)
+**Step 1:** Setup (one-time only)
 ```bash
 python tools/install-hooks.py
 ```
 
-After setup, the build runs automatically when you commit changes to the `limits/` folder.
+**Step 2:** Update limits
+- Edit your CSV file in `limits/`
+- Commit changes → builds automatically
+
+**Step 3:** Share
+```bash
+git push
+```
+
+### Manual Method
+**Step 1:** Update limits
+- Edit your CSV file in `limits/`
+
+**Step 2:** Run build
+```bash
+python tools/build.py
+```
+
+**Step 3:** Commit & push
+```bash
+git add .
+git commit -m "Update limits"
+git push
+```
+
+## What Happens Under the Hood
+
+**Build Process:**
+1. Scans all CSV files in `limits/` folder
+2. Validates headers and data format
+3. Combines all rows into unified datasets
+4. Generates 3 distribution files in `dist/`
+5. Locks files as read-only to prevent manual edits
+
+**Distribution Files:**
+- **`master.csv`**: Complete dataset with all columns including revision notes
+- **`latest.json`**: JSON array of operational limits (excludes revision notes)
+- **`manifest.json`**: Build metadata (timestamp, row count)
+
+**Using the Output:**
+```python
+# Load JSON limits in your application
+import json
+with open('dist/latest.json') as f:
+    limits = json.load(f)
+
+# Or use CSV for spreadsheet analysis
+import pandas as pd
+df = pd.read_csv('dist/master.csv')
+```
 
 ## Rules
-
-- Asset IDs are required (no empty values)
-- Empty CSV values become `null` in JSON output
-- Distribution files are read-only (automatically locked)
-- Only the build script can modify `dist/` files
-
-## Team Workflow
-
-1. Edit your subsystem's CSV file in `limits/`
-2. Commit your changes
-3. Distribution files update automatically
-4. Push to share with other teams
-
-## Output Files
-
-- **master.csv**: Complete data including revision notes
-- **latest.json**: Operational limits only (no revision notes)
-- **manifest.json**: Build timestamp and row count
+- Asset IDs required (no empty values)
+- Empty CSV values become `null` in JSON
+- Distribution files are read-only
