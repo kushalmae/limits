@@ -32,6 +32,25 @@ All CSV files must use these exact headers in order:
 subsystem,asset_id,asset_type,mnemonic,lower_critical,lower_caution,upper_caution,upper_critical,revision_notes
 ```
 
+## JSON Output Format
+
+The `latest.json` file contains operational limits in this structure:
+
+```json
+[
+  {
+    "mnemonic": "PWR_BUS_VOLTAGE",
+    "asset_id": "TM001",
+    "subsystem": "Power",
+    "asset_type": "THUNDER",
+    "lower_critical": 22.5,
+    "lower_caution": 24.0,
+    "upper_caution": 30.0,
+    "upper_critical": 32.0
+  }
+]
+```
+
 ## Usage
 
 ### Automatic Method (Recommended)
