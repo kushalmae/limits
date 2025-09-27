@@ -71,7 +71,6 @@ def install_git_hooks():
 # Post-commit hook to re-lock dist files after successful commit
 
 if [ -f "dist/master.csv" ] || [ -f "dist/latest.json" ] || [ -f "dist/manifest.json" ]; then
-    echo "Re-locking dist files..."
     # Only lock files, don't rebuild (which would update timestamps)
     chmod -w dist/master.csv dist/latest.json dist/manifest.json 2>/dev/null || true
 fi

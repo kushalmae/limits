@@ -4,58 +4,31 @@
 # Automatically builds dist/ folder when limits/ folder changes are committed
 #
 
-echo "Spacecraft Limits Pre-commit Hook"
-echo "=================================="
-
 # Check if any files in limits/ folder are being committed
 limits_changed=$(git diff --cached --name-only | grep "^limits/")
 
 if [ -n "$limits_changed" ]; then
-    echo "Changes detected in limits/ folder:"
-    echo "$limits_changed" | sed 's/^/   - /'
-    echo ""
+    echo "Building distribution files..."
     
-    echo "Running build script to update dist/ folder..."
-    
-    # Run the build script
-    if python tools/build_master_limit_files_from_csvs.py; then
-        echo ""
-        echo "Build completed successfully!"
-        wait 2
-        
+    # Run the build script (suppress output unless there's an error)
+    if python tools/build_master_limit_files_from_csvs.py >/dev/null 2>&1; then
         # Check if dist files were generated/updated
         if [ -f "dist/master.csv" ] && [ -f "dist/latest.json" ] && [ -f "dist/manifest.json" ]; then
-            echo "Adding updated dist files to commit..."
-            
             # Temporarily unlock the files so git can stage them
             chmod +w dist/master.csv dist/latest.json dist/manifest.json 2>/dev/null || true
             
             # Add the updated dist files to the commit
             git add dist/master.csv dist/latest.json dist/manifest.json
             
-            # Verify files were staged
-            git diff --cached --name-only | grep -E "dist/(master\.csv|latest\.json|manifest\.json)" || {
-                echo "WARNING: Some dist files may not have been staged properly"
-            }
-            
-            echo "   - dist/master.csv"
-            echo "   - dist/latest.json" 
-            echo "   - dist/manifest.json"
-            echo ""
-            echo "Dist files will be locked after commit completes"
+            echo "Added dist files to commit"
         else
             echo "ERROR: Expected dist files were not generated"
             exit 1
         fi
     else
-        echo ""
         echo "ERROR: Build script failed!"
+        python tools/build_master_limit_files_from_csvs.py  # Show error output
         echo "Commit aborted. Please fix the issues and try again."
         exit 1
     fi
-else
-    echo "No changes in limits/ folder - skipping build"
 fi
-
-echo "=================================="
-echo "Pre-commit hook completed successfully"
