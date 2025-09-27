@@ -44,10 +44,11 @@ python tools/install-hooks.py
 - Edit your CSV file in `limits/`
 - Commit changes → builds automatically
 
-**Step 3:** Share
+**Step 3:** Share (files auto-generated)
 ```bash
 git push
 ```
+*Creates: `master.csv`, `latest.json`, `manifest.json` in `dist/`*
 
 ### Manual Method
 **Step 1:** Update limits
@@ -58,12 +59,13 @@ git push
 python tools/build.py
 ```
 
-**Step 3:** Commit & push
+**Step 3:** Commit & push (with generated files)
 ```bash
 git add .
 git commit -m "Update limits"
 git push
 ```
+*Includes: `master.csv`, `latest.json`, `manifest.json` in `dist/`*
 
 ## What Happens Under the Hood
 
