@@ -11,7 +11,7 @@ if [ -n "$limits_changed" ]; then
     echo "Building distribution files..."
     
     # Run the build script (suppress output unless there's an error)
-    if python tools/build_master_limit_files_from_csvs.py >/dev/null 2>&1; then
+    if python tools/build_master_limit_files_from_csvs.py; then
         # Check if dist files were generated/updated
         if [ -f "dist/master.csv" ] && [ -f "dist/latest.json" ] && [ -f "dist/manifest.json" ]; then
             # Temporarily unlock the files so git can stage them
