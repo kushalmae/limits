@@ -11,6 +11,7 @@ import json
 import os
 import glob
 import stat
+import argparse
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -171,6 +172,10 @@ def read_csv_files(limits_dir):
                     for i, header in enumerate(EXPECTED_HEADERS):
                         row_dict[header] = row[i].strip() if i < len(row) else ""
                     
+                    # Add source tracking for duplicate detection
+                    row_dict['_source_file'] = os.path.basename(csv_file)
+                    row_dict['_row_number'] = row_number
+                    
                     # Validate asset_id is not empty
                     if not validate_asset_id(row_dict, csv_file, row_number):
                         print(f"SKIPPING: Row {row_number} in {csv_file} due to empty asset_id")
@@ -194,13 +199,57 @@ def read_csv_files(limits_dir):
     return all_rows
 
 
+def check_duplicate_mnemonics(rows):
+    """
+    Check for duplicate mnemonics and alert user.
+    
+    Args:
+        rows (list): List of row dictionaries
+        
+    Returns:
+        bool: True if no duplicates, False if duplicates exist
+    """
+    seen = {}  # mnemonic -> first occurrence info
+    duplicates = []
+    
+    for row in rows:
+        mnemonic = row.get('mnemonic', '').strip()
+        if not mnemonic:
+            continue
+            
+        if mnemonic in seen:
+            # Found duplicate
+            duplicates.append((mnemonic, seen[mnemonic], row))
+        else:
+            # First time seeing this mnemonic
+            seen[mnemonic] = row
+    
+    if duplicates:
+        print("=" * 50)
+        print("ERROR: DUPLICATE MNEMONICS DETECTED")
+        print("=" * 50)
+        
+        for mnemonic, first_row, duplicate_row in duplicates:
+            print(f"MNEMONIC '{mnemonic}' found in:")
+            print(f"  1. {first_row['_source_file']} (row {first_row['_row_number']}) - {first_row['subsystem']}")
+            print(f"  2. {duplicate_row['_source_file']} (row {duplicate_row['_row_number']}) - {duplicate_row['subsystem']}")
+            print()
+        
+        print("Fix: Rename mnemonics to be unique (e.g., PWR_VOLTAGE, THERM_VOLTAGE)")
+        print("Build aborted.")
+        print("=" * 50)
+        return False
+    
+    return True
+
+
 def write_master_csv(output_path, rows):
     """
     Write all rows to a master CSV file.
     
     Args:
         output_path (str): Path to the output CSV file
-        rows (list): List of row dictionaries
+        rows (list): List of row dictionaries (pre-sorted if needed)
     """
     print(f"Writing master CSV: {output_path}")
     
@@ -218,7 +267,7 @@ def write_json_output(output_path, rows):
     
     Args:
         output_path (str): Path to the output JSON file
-        rows (list): List of row dictionaries
+        rows (list): List of row dictionaries (pre-sorted if needed)
     """
     print(f"Writing JSON output: {output_path}")
     
@@ -258,6 +307,25 @@ def write_json_output(output_path, rows):
 
 def main():
     """Main function to orchestrate the build process."""
+    parser = argparse.ArgumentParser(
+        description='Build master limit files from CSV inputs',
+        epilog='''
+Sort options: subsystem, asset_id, asset_type, mnemonic, 
+              lower_critical, lower_caution, upper_caution, upper_critical
+
+Examples:
+  --sort-by subsystem                    # Sort by subsystem only
+  --sort-by mnemonic                     # Sort by mnemonic only  
+  --sort-by subsystem --then-by mnemonic # Sort by subsystem, then mnemonic within each subsystem
+        '''
+    )
+    parser.add_argument('--sort-by', type=str, choices=EXPECTED_HEADERS,
+                       help='Primary sort field')
+    parser.add_argument('--then-by', type=str, choices=EXPECTED_HEADERS,
+                       help='Secondary sort field (within primary sort groups)')
+    
+    args = parser.parse_args()
+    
     print("Spacecraft Subsystem Limits Build Tool")
     print("=" * 40)
     
@@ -287,13 +355,37 @@ def main():
         print("No valid data found. Exiting.")
         return 1
     
+    # Check for duplicate mnemonics
+    if not check_duplicate_mnemonics(all_rows):
+        return 1
+    
+    # Sort rows once if requested
+    output_rows = all_rows
+    if args.sort_by and args.sort_by in EXPECTED_HEADERS:
+        if args.then_by and args.then_by in EXPECTED_HEADERS:
+            print(f"Sorting by: {args.sort_by}, then by: {args.then_by}")
+            # Two-level sort: primary field, then secondary field within groups
+            output_rows = sorted(all_rows, key=lambda x: (
+                x[args.sort_by].lower() if x[args.sort_by] else '',
+                x[args.then_by].lower() if x[args.then_by] else ''
+            ))
+        else:
+            print(f"Sorting by: {args.sort_by}")
+            output_rows = sorted(all_rows, key=lambda x: x[args.sort_by].lower() if x[args.sort_by] else '')
+    
+    # Clean up source tracking fields before output
+    clean_rows = []
+    for row in output_rows:
+        clean_row = {k: v for k, v in row.items() if not k.startswith('_')}
+        clean_rows.append(clean_row)
+    
     # Write outputs
     master_csv_path = dist_dir / "master.csv"
     json_output_path = dist_dir / "latest.json"
     manifest_path = dist_dir / "manifest.json"
     
-    write_master_csv(str(master_csv_path), all_rows)
-    write_json_output(str(json_output_path), all_rows)
+    write_master_csv(str(master_csv_path), clean_rows)
+    write_json_output(str(json_output_path), clean_rows)
     
     # Lock all generated files to prevent manual editing
     lock_dist_files(dist_dir)

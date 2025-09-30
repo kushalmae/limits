@@ -20,9 +20,9 @@
     "upper_critical": 55.0
   },
   {
-    "mnemonic": "PWR_SOLAR_CURRENT",
+    "mnemonic": "PROP_FLOW_RATE2",
     "asset_id": "ANY",
-    "subsytem": "Power",
+    "subsytem": "Power2",
     "asset_type": "Electrical",
     "lower_critical": 0.0,
     "lower_caution": 2.0,
